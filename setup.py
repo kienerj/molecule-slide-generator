@@ -23,6 +23,6 @@ setuptools.setup(
     install_requires=[
        'rdkit>=2020.09.1',
        'numpy',
-       'pillow'
+       'Pillow'
     ]
 )
