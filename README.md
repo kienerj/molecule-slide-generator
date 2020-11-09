@@ -42,11 +42,13 @@ for mol in mols:
         color = '#e8860e'
     else:
         color = '#b52009'
-    props = [TextProperty('Name', mol.GetProp('_Name')), TextProperty('Activity', a,                   color=color)]
+    props = [TextProperty('Name', mol.GetProp('_Name')), 
+             TextProperty('Activity', a, color=color)]
     all_props.append(props)
     
 # Generate the slide
-sg = SlideGenerator(mols_per_row=3, rows=3, font_size=18, font='comicbd',   	                              number_of_properties=2, slide_width=800, slide_height=600)
+sg = SlideGenerator(mols_per_row=3, rows=3, font_size=18, font='comicbd', 
+                    number_of_properties=2, slide_width=800, slide_height=600)
 png = sg.generate_slide(mols, all_props, 'example_slide.png')
 ```
 
@@ -66,7 +68,18 @@ For properties you can see the available data also by using RDKit:
 ```python
 nprops = Chem.MetadataFromPNGString(png)
 nprops.keys()
-dict_keys(['rdkitPKL rdkit 2020.09.1', 'MOL rdkit 2020.09.1', 'SMILES rdkit 2020.09.1', 'Name', 'Activity', 'rdkitPKL1 rdkit 2020.09.1', 'MOL1 rdkit 2020.09.1', 'SMILES1 rdkit 2020.09.1', 'Name1', 'Activity1', 'rdkitPKL2 rdkit 2020.09.1', 'MOL2 rdkit 2020.09.1', 'SMILES2 rdkit 2020.09.1', 'Name2', 'Activity2', 'rdkitPKL3 rdkit 2020.09.1', 'MOL3 rdkit 2020.09.1', 'SMILES3 rdkit 2020.09.1', 'Name3', 'Activity3', 'rdkitPKL4 rdkit 2020.09.1', 'MOL4 rdkit 2020.09.1', 'SMILES4 rdkit 2020.09.1', 'Name4', 'Activity4', 'rdkitPKL5 rdkit 2020.09.1', 'MOL5 rdkit 2020.09.1', 'SMILES5 rdkit 2020.09.1', 'Name5', 'Activity5', 'rdkitPKL6 rdkit 2020.09.1', 'MOL6 rdkit 2020.09.1', 'SMILES6 rdkit 2020.09.1', 'Name6', 'Activity6', 'rdkitPKL7 rdkit 2020.09.1', 'MOL7 rdkit 2020.09.1', 'SMILES7 rdkit 2020.09.1', 'Name7', 'Activity7', 'rdkitPKL8 rdkit 2020.09.1', 'MOL8 rdkit 2020.09.1', 'SMILES8 rdkit 2020.09.1', 'Name8', 'Activity8'])
+dict_keys(['rdkitPKL rdkit 2020.09.1', 'MOL rdkit 2020.09.1', 'SMILES rdkit 2020.09.1', 'Name', 
+           'Activity', 'rdkitPKL1 rdkit 2020.09.1', 'MOL1 rdkit 2020.09.1', 'SMILES1 rdkit 2020.09.1', 
+           'Name1', 'Activity1', 'rdkitPKL2 rdkit 2020.09.1', 'MOL2 rdkit 2020.09.1', 
+           'SMILES2 rdkit 2020.09.1', 'Name2', 'Activity2', 'rdkitPKL3 rdkit 2020.09.1', 
+           'MOL3 rdkit 2020.09.1', 'SMILES3 rdkit 2020.09.1', 'Name3', 'Activity3', 
+           'rdkitPKL4 rdkit 2020.09.1', 'MOL4 rdkit 2020.09.1', 'SMILES4 rdkit 2020.09.1', 'Name4', 
+           'Activity4', 'rdkitPKL5 rdkit 2020.09.1', 'MOL5 rdkit 2020.09.1', 'SMILES5 rdkit 2020.09.1', 
+           'Name5', 'Activity5', 'rdkitPKL6 rdkit 2020.09.1', 'MOL6 rdkit 2020.09.1', 
+           'SMILES6 rdkit 2020.09.1', 'Name6', 'Activity6', 'rdkitPKL7 rdkit 2020.09.1', 
+           'MOL7 rdkit 2020.09.1', 'SMILES7 rdkit 2020.09.1', 'Name7', 'Activity7', 
+           'rdkitPKL8 rdkit 2020.09.1', 'MOL8 rdkit 2020.09.1', 'SMILES8 rdkit 2020.09.1', 'Name8', 
+           'Activity8'])
 ```
 
 The system used is that first molecules data is in key with the properties name, eg. "Activity" in the example. For each subsequent molecule the index of the molecule in the file is appended. So to get the activity value for the second molecule in the image you would use the key "Activity1". Data is returned as bytes and must be converted accordingly.
