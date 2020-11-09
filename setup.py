@@ -19,10 +19,5 @@ setuptools.setup(
         "Operating System :: OS Independent",
         "Development Status :: 4 - Beta"
     ],
-    python_requires='>=3.6',
-    install_requires=[
-       'rdkit>=2020.09.1',
-       'numpy',
-       'Pillow'
-    ]
+    python_requires='>=3.6'
 )
