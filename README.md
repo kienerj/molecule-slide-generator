@@ -89,10 +89,12 @@ float(nprops['Activity1'].decode('utf-8'))
 7.7
 ```
 
+### Exporting the data from MS Word or PowerPoint
+
+If you insert the image into an MS Office document, it can get problematic to extract the original image with all the metadata. However looking at the document contents the original images are present and can be extracted again. For extracting all the molecules in an MS Office document you can use the KNIME component [Extract RDKit Molecules From Office](https://hub.knime.com/kienerj/spaces/Public/latest/Extract%20RDKit%20Molecules%20From%20Office).
+
 ### Miscellaneous
 
 The default parameters of the slide generator work well with small molecules and a PowerPoint template with an aspect ratio of 16:9 that has a title and subtitle text box, the specific setup I have to use. You will need to play with the parameters to find an good solution for your specific needs.
 
-### Exporting the data from MS Word or PowerPoint
-
-If you insert the image into an MS Office document, it can get problematic to extract the original image with all the metadata. However looking at the document contents the original images are present and can be extracted again. For extracting all the molecules in an MS Office document you can use the KNIME component [Extract RDKit Molecules From Office](https://hub.knime.com/kienerj/spaces/Public/latest/Extract%20RDKit%20Molecules%20From%20Office).
+Technically the generator creates a molecule image using RDKit and a separate image with the text (properties) and merges them. Then all these molecules get merged together into the final image to which the metadata is appended. For all this "image manipulation" `pillow` is used.
