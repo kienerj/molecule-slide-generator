@@ -4,7 +4,7 @@ RDKit Molecule Slide Generator is a tool for generating an overview image of mol
 
 ![example_slide_bzr](images/example_slide_bzr.png)
 
-This examples uses the first 9 molecules of the `bzr.sdf` in the RDKit distributions data directory and showcases a number of features.
+This example uses the first 9 molecules of the `bzr.sdf` in the RDKit distributions data directory and showcases a number of features.
 
 ### Features
 
