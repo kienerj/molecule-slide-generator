@@ -122,9 +122,22 @@ float(nprops['Activity1'].decode('utf-8'))
 7.7
 ```
 
-### Exporting the data from MS Word or PowerPoint
+### Extracting
 
-If you insert the image into an MS Office document, it can get problematic to extract the original image with all the metadata. However looking at the document contents (thanks to Greg for this hint), the original images are present and can be extracted again. For extracting all the molecules in an MS Office document you can use the KNIME component [Extract RDKit Molecules From Office](https://hub.knime.com/kienerj/spaces/Public/latest/Extract%20RDKit%20Molecules%20From%20Office).
+The molecules and properties can be extracted again from the images by using the `DataExtractor`.
+
+``````python
+extractor = DataExtractor()
+df = extractor.extract_single("images/example_slide_bzr.png")
+``````
+
+This will return a `pandas.DataFrame` containing the molecules and properties.
+
+`DataExtractor` can also be called in a loop using multiple calls to `extractor.extract(image)` and finally calling `df = extractor.get_data()` to return the data from all images at once.
+
+#### Extracting from MS Word or PowerPoint
+
+If you insert the image into an MS Office document, it can get problematic to extract the original image with all the metadata. However looking at the document contents (thanks to Greg for this hint), the original images are present and can be extracted again. For extracting all the molecules in an MS Office document you can use the KNIME component [Extract RDKit Molecules From Office](https://hub.knime.com/kienerj/spaces/Public/latest/Extract%20RDKit%20Molecules%20From%20Office). Alternatively you can manually or programmatically unzip the office document and use `DataExtractor` to iterate over the contained png images.
 
 ### Miscellaneous
 
