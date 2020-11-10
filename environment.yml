@@ -1,0 +1,13 @@
+name: slide_generator
+channels:
+  - defaults
+  - rdkit
+dependencies:
+  - python>=3.6
+  - rdkit>=2020.09.1
+  - numpy  
+  - pillow
+  - pip
+  - git
+  - pip:
+    - git+https://github.com/kienerj/molecule-slide-generator.git

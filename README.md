@@ -4,29 +4,60 @@ RDKit Molecule Slide Generator is a tool for generating an overview image of mol
 
 ![example_slide_bzr](images/example_slide_bzr.png)
 
-This example uses the first 9 molecules of the `bzr.sdf` in the RDKit distributions data directory and showcases a number of features.
+This example uses the first 9 molecules of the `bzr.sdf` in the RDKit distributions data directory and uses Comic Sans MS as font. Activity values are conditionally colored.
+
+### Why should I use it?
+
+Traditional reporting tools could also be used to generate a similar output however the problem with these is that the information especially the chemical structure is then lost as it could only be restored via optical structure recognition. This can be avoided by using commercial tools like ChemDraw but it does not offer any automated way to generated such documents out-of-the-box and you are locked-in.
+
+Molecule Slide Generator can be used in an automated fashion via web application or say a python script in KNIME. The generated images contain all the chemical structures in different formats and the properties inside the images metadata. This data can be extracted again without the need for RDKit (albeit RDKit makes it easier if available). So you get an automated, vendor agnostic solution.
+
+### Installation
+
+##### Requirements
+
+- RDKit 2020.09.1 or higher
+- numpy
+- pillow
+
+##### New conda environment
+
+For installation into a new conda environment, please use the included `environment.yml` file:
+
+```bash
+conda env create -f environment.yml
+```
+
+This takes care of all dependencies and is the suggested way to try it out.
+
+##### Existing environment
+
+To install into an existing environment, please ensure the needed requirements are already installed as the install script does not verify them.
+
+```bash
+pip install git+https://github.com/kienerj/molecule-slide-generator.git
+```
 
 ### Features
 
-- Any true type font (.ttf) can be used for the atom labels and text. Comic Sans MS in this case.
+- Any true type font (.ttf) can be used for the atom labels and text. 
 - Set font size of atom labels and text
-- The text can be colored separately for each molecule
+- The text can be colored separately for each molecule and property
 - Set bond length of molecule (`fixedBondLength`drawing option)
-- The property can be displayed with the properties name instead of just the value as above
+- Molecules are rescaled to RDKits default bond length so that all of them have the same size
+- The property can be displayed with or without the properties name
 - Define size of slide (width, height) and number of rows and columns 
 - Molecule data and properties are stored in images metadata and can be extracted again
-
-### Requirements
-
-- RDKit 2020.09.1 or higher (due to new PNG Metadata feature used here)
-- numpy
-- pillow
 
 ### Example Code
 
 This is the code used to generate above image on Windows. For Linux you would have to use a different font or install MS Core fonts.
 
 ```python
+from rdkit import Chem
+from rdkit.Chem import AllChem,Draw
+from molecule_slide_generator import *
+
 suppl = Chem.SDMolSupplier('data/bzr.sdf')
 # first 9 mols
 mols = [x for x in suppl][:9]
@@ -91,10 +122,10 @@ float(nprops['Activity1'].decode('utf-8'))
 
 ### Exporting the data from MS Word or PowerPoint
 
-If you insert the image into an MS Office document, it can get problematic to extract the original image with all the metadata. However looking at the document contents the original images are present and can be extracted again. For extracting all the molecules in an MS Office document you can use the KNIME component [Extract RDKit Molecules From Office](https://hub.knime.com/kienerj/spaces/Public/latest/Extract%20RDKit%20Molecules%20From%20Office).
+If you insert the image into an MS Office document, it can get problematic to extract the original image with all the metadata. However looking at the document contents, the original images are present and can be extracted again. For extracting all the molecules in an MS Office document you can use the KNIME component [Extract RDKit Molecules From Office](https://hub.knime.com/kienerj/spaces/Public/latest/Extract%20RDKit%20Molecules%20From%20Office).
 
 ### Miscellaneous
 
 The default parameters of the slide generator work well with small molecules and a PowerPoint template with an aspect ratio of 16:9 that has a title and subtitle text box, the specific setup I have to use. You will need to play with the parameters to find an good solution for your specific needs.
 
-Technically the generator creates a molecule image using RDKit and a separate image with the text (properties) and merges them. Then all these molecules get merged together into the final image to which the metadata is appended. For all this "image manipulation" `pillow` is used.
+Technically the generator creates a molecule image using RDKit and a separate image with the text (properties) and merges them. Then all these molecules get merged together into the final image to which the metadata is appended. For all this "image manipulation" `pillow` is used.
