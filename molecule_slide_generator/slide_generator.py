@@ -99,7 +99,7 @@ class SlideGenerator(object):
         self.num_chars_per_line = self.image_width / avg_char_width
         self.bond_length = bond_length
 
-    def generate_slide(self, mols, properties, out_path):
+    def generate_slide(self, mols, properties, out_path=None):
         """
         Generates an image with all molecules and their properties below them.
 
@@ -162,7 +162,8 @@ class SlideGenerator(object):
                 png_info.add_text('{}{}'.format(prop.name, key_index), str(prop.value))
                 #print("{}: {}".format(prop.name, str(prop.value)))
 
-        slide.save(out_path, format='PNG', dpi=self.dpi, pnginfo=png_info)
+        if out_path is not None:
+            slide.save(out_path, format='PNG', dpi=self.dpi, pnginfo=png_info)
 
         img_byte_arr = BytesIO()
         slide.save(img_byte_arr, format='PNG', dpi=self.dpi, pnginfo=png_info)
