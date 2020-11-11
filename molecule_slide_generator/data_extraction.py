@@ -110,4 +110,6 @@ class DataExtractor(object):
         self.data['Reference'] = self.reference
         df = pd.DataFrame(data=self.data)
         PandasTools.ChangeMoleculeRendering(df)
+        self.__init__() #reinitalize
         return df
+
