@@ -1,6 +1,6 @@
 # RDKit Molecule Slide Generator
 
-RDKit Molecule Slide Generator is a tool for generating an overview image of molecules and their properties for usage in reports or presentations. It's easier to show than explain.
+RDKit Molecule Slide Generator is a tool for generating an overview image of molecules and their properties for usage in reports or presentations. An advanced `MolsToGridImage`. It's easier to show than explain.
 
 ![example_slide_bzr](images/example_slide_bzr.png)
 
@@ -37,7 +37,7 @@ This takes care of all dependencies and is the suggested way to try it out.
 To install into an existing environment, please ensure the needed requirements are already installed as the install script does not verify them.
 
 ```bash
-pip install git+https://github.com/kienerj/molecule-slide-generator.git
+pip install git+https://github.com/kienerj/molecule-slide-generator
 ```
 
 ### Features
@@ -60,7 +60,7 @@ from rdkit import Chem
 from rdkit.Chem import AllChem,Draw
 from molecule_slide_generator import *
 
-suppl = Chem.SDMolSupplier('data/bzr.sdf')
+suppl = Chem.SDMolSupplier('tests/bzr21.sdf')
 # first 9 mols
 mols = [x for x in suppl][:9]
 
@@ -87,7 +87,14 @@ png = sg.generate_slide(mols, all_props, 'example_slide.png')
 
 For font you can either use a named font or a full path to a `.ttf` file. For named fonts the font must be in `C:/Windows/Fonts/` directory for Windows and for Linux in `/usr/share/fonts/truetype`.
 
-To read out the molecules, use the according RDKit functionality:
+
+### Extracting
+
+Data can be extracted either manually or with the provided `DataExtractor` tool.
+
+#### Manually
+
+Molecules and properties can be extracted "manually" using the according RDKit functionality:
 
 ```python
 mols = Chem.MolsFromPNGString(png)
@@ -122,7 +129,7 @@ float(nprops['Activity1'].decode('utf-8'))
 7.7
 ```
 
-### Extracting
+#### Data Extractor
 
 The molecules and properties can be extracted again from the images by using the `DataExtractor`.
 
@@ -131,13 +138,13 @@ extractor = DataExtractor()
 df = extractor.extract_single("images/example_slide_bzr.png")
 ``````
 
-This will return a `pandas.DataFrame` containing the molecules and properties.
+This will return a `pandas.DataFrame` containing all the molecules and stored properties.
 
-`DataExtractor` can also be called in a loop using multiple calls to `extractor.extract(image)` and finally calling `df = extractor.get_data()` to return the data from all images at once.
+`DataExtractor` can also be called in a loop using multiple calls to `extractor.extract(image)` and finally calling `df = extractor.get_data()` to return the data from multiple images in a single data frame.
 
 #### Extracting from MS Word or PowerPoint
 
-If you insert the image into an MS Office document, it can get problematic to extract the original image with all the metadata. However looking at the document contents (thanks to Greg for this hint), the original images are present and can be extracted again. For extracting all the molecules in an MS Office document you can use the KNIME component [Extract RDKit Molecules From Office](https://hub.knime.com/kienerj/spaces/Public/latest/Extract%20RDKit%20Molecules%20From%20Office). Alternatively you can manually or programmatically unzip the office document and use `DataExtractor` to iterate over the contained png images.
+If you insert the image into an MS Office document, it can get problematic to extract the original image with all the metadata. However looking at the document contents (thanks to Greg for this hint), the original images are present and can be extracted again. For extracting all the molecules in an MS Office document you can use the KNIME component [Extract RDKit Molecules From Office](https://hub.knime.com/kienerj/spaces/Public/latest/Extract%20RDKit%20Molecules%20From%20Office). Alternatively you can manually or programmatically unzip the office document and use `DataExtractor` to iterate over the contained png images.
 
 ### Miscellaneous
 
