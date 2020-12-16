@@ -15,7 +15,7 @@ class DataExtractor(object):
     The extraction can be done on a single image (extract_single) or repeatedly called in a loop (extract). Properties
     not available for a specific molecule will be set to `None`.
 
-    If a molecule doesn't contain a molecule, it is silently ignored.
+    If an image doesn't contain a molecule, it is silently ignored.
     """
 
     def __init__(self):
@@ -110,6 +110,7 @@ class DataExtractor(object):
         self.data['Reference'] = self.reference
         df = pd.DataFrame(data=self.data)
         PandasTools.ChangeMoleculeRendering(df)
-        self.__init__() #reinitalize
+        # reinitialize instance
+        self.__init__()
         return df
 

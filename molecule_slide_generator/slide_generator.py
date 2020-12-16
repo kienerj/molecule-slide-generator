@@ -225,8 +225,7 @@ class SlideGenerator(object):
                 total += bl
 
         avg_bl = (total / len(bonds))
-        # cherrypy.log("avg bond length: {}".format(avg_bl))
-        # cherrypy.log("Bonds: {}".format(str(len(bonds))))
+
         if avg_bl > 0.0:
 
             bl_ratio = default_bond_length / avg_bl

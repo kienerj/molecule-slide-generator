@@ -1,6 +1,6 @@
 # RDKit Molecule Slide Generator
 
-RDKit Molecule Slide Generator is a tool for generating an overview image of molecules and their properties for usage in reports or presentations. An advanced `MolsToGridImage`. It's easier to show than explain.
+RDKit Molecule Slide Generator is a tool for generating an overview image of molecules and their properties for usage in reports, presentations or blogs. An advanced `MolsToGridImage`. It's easier to show than explain.
 
 ![example_slide_bzr](images/example_slide_bzr.png)
 
