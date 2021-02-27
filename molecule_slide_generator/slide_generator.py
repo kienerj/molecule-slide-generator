@@ -114,7 +114,7 @@ class SlideGenerator(object):
         # cut-off mols + properties silently. I think this is better than raising a ValueError
         mols = mols[:self.max_mols]
         properties = properties[:self.max_mols]
-        if len(mols) != len(properties):
+        if self.number_of_properties >0 and len(mols) != len(properties):
             raise ValueError('Number of molecules must match number of properties.')
 
         if len(mols) == self.max_mols:
@@ -132,11 +132,14 @@ class SlideGenerator(object):
         for index, mol in enumerate(mols):
 
             mol_image = self._draw_mol(mol)
-            text_image = self._draw_text(properties[index])
+            if self.number_of_properties > 0:
+                text_image = self._draw_text(properties[index])
 
-            combined = Image.new('RGBA', [self.image_width, self.row_height], (255, 255, 255, 0))
-            combined.paste(mol_image)
-            combined.paste(text_image, (0, self.molecule_image_height))
+                combined = Image.new('RGBA', [self.image_width, self.row_height], (255, 255, 255, 0))
+                combined.paste(mol_image)
+                combined.paste(text_image, (0, self.molecule_image_height))
+            else:
+                combined = mol_image
 
             row = index // self.mols_per_row
             column = index % self.mols_per_row
@@ -156,11 +159,12 @@ class SlideGenerator(object):
             png_info.add_text('SMILES{} rdkit {}'.format(key_index, rdkit.__version__),
                               mol_image.info['SMILES rdkit {}'.format(rdkit.__version__)])
 
-            mol_properties = properties[index]
-            mol_properties = mol_properties[:self.number_of_properties]
-            for prop in mol_properties:
-                png_info.add_text('{}{}'.format(prop.name, key_index), str(prop.value))
-                #print("{}: {}".format(prop.name, str(prop.value)))
+            if self.number_of_properties > 0:
+                mol_properties = properties[index]
+                mol_properties = mol_properties[:self.number_of_properties]
+                for prop in mol_properties:
+                    png_info.add_text('{}{}'.format(prop.name, key_index), str(prop.value))
+                    #print("{}: {}".format(prop.name, str(prop.value)))
 
         if out_path is not None:
             slide.save(out_path, format='PNG', dpi=self.dpi, pnginfo=png_info)
