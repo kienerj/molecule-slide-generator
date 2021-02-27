@@ -28,7 +28,7 @@ class SlideGenerator(object):
     LINUX_TRUETYPE_FONTS_FOLDER = '/usr/share/fonts/truetype'
 
     def __init__(self, mols_per_row=7, rows=3, font_size=16, font='Calibrib', number_of_properties=4, bond_length=20,
-                 slide_width=1440, slide_height=607, dpi = (120,120)):
+                 bond_width=2, slide_width=1440, slide_height=607, dpi = (120,120)):
         """
         The parameters defined are used to calculate the size that each molecule and the properties part can take up.
 
@@ -81,6 +81,7 @@ class SlideGenerator(object):
             raise ValueError("Desired font file '{}' does not exist.".format({self.font_path}))
 
         self.font_size = font_size
+        self.bond_width = bond_width
         self.mols_per_row = mols_per_row
         self.mols_per_column = rows
         self.max_mols = mols_per_row * rows
@@ -198,7 +199,7 @@ class SlideGenerator(object):
         drawer.SetFontSize(self.font_size)
         opts = drawer.drawOptions()
         opts.clearBackground = False
-        opts.bondLineWidth = 2
+        opts.bondLineWidth = self.bond_width
         opts.fixedBondLength = self.bond_length
         opts.minFontSize = self.font_size
         opts.maxFontSize = self.font_size
