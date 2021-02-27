@@ -114,7 +114,7 @@ class SlideGenerator(object):
         # cut-off mols + properties silently. I think this is better than raising a ValueError
         mols = mols[:self.max_mols]
         properties = properties[:self.max_mols]
-        if self.number_of_properties >0 and len(mols) != len(properties):
+        if self.number_of_properties > 0 and len(mols) != len(properties):
             raise ValueError('Number of molecules must match number of properties.')
 
         if len(mols) == self.max_mols:
@@ -195,11 +195,13 @@ class SlideGenerator(object):
         mol = rdMolDraw2D.PrepareMolForDrawing(mol, kekulize=kekulize, addChiralHs=add_chiral_hs)
         mol = SlideGenerator._scale_bond_length(mol)
         drawer = rdMolDraw2D.MolDraw2DCairo(self.image_width, self.molecule_image_height)
+        drawer.SetFontSize(self.font_size)
         opts = drawer.drawOptions()
         opts.clearBackground = False
         opts.bondLineWidth = 2
         opts.fixedBondLength = self.bond_length
-        opts.minFontSize = 16
+        opts.minFontSize = self.font_size
+        opts.maxFontSize = self.font_size
         opts.fontFile = self.font_path
 
         drawer.DrawMolecule(mol)
