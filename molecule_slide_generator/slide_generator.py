@@ -58,7 +58,7 @@ class SlideGenerator(object):
 
         root, ext = os.path.splitext(font)
         platform_system = platform.system()
-        if ext is not '' and ext != 'ttf':
+        if ext != '' and ext != 'ttf':
             raise ValueError("'font' must be a path to an existing ttf file. However an {} file was provided.".format(ext))
         elif ext == 'ttf':
             self.font_path = font
