@@ -114,7 +114,7 @@ class SlideGenerator(object):
         # cut-off mols + properties silently. I think this is better than raising a ValueError
         mols = mols[:self.max_mols]
         properties = properties[:self.max_mols]
-        if len(mols) != len(properties):
+        if self.number_of_properties >0 and len(mols) != len(properties):
             raise ValueError('Number of molecules must match number of properties.')
 
         if len(mols) == self.max_mols:
