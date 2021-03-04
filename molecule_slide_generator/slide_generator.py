@@ -109,6 +109,52 @@ class SlideGenerator(object):
         :return: bytes object containing the png image data say for display in a notebook
         """
 
+        mols, slide, png_info = self._prepare_slide(mols, properties)
+
+        for index, mol in enumerate(mols):
+
+            mol_image = self._draw_mol(mol)
+
+            self._add_to_slide(slide, properties, mol_image, index, png_info)
+
+        return self._finalize_slide(slide, png_info, out_path)
+
+    def generate_slide_from_images(self, mols, properties, images, out_path=None):
+        """
+        Generates an image with all molecules and their properties below them.
+
+        Images is a list containing the molecules images as PIL images to use in the slide. They must be in same order as mols.
+        This allows each molecule image to be generated differently like substructure highlighting, annotations and so
+        forth. So many options they can't be all part of a methods argument.
+
+        :param mols: list of rdkit molecules
+        :param properties: list of list of TextProperty
+        :param images: list of images to use for each molecule
+        :param out_path: optional file to save generated images
+        :return: bytes object containing the png image data say for display in a notebook
+        """
+
+        if images is None or len(images) != len(mols):
+            raise ValueError("List of images is of different size than list of molecules.")
+
+        mols, slide, png_info = self._prepare_slide(mols, properties)
+
+        for index, mol in enumerate(mols):
+
+            mol_image = images[index]
+            if mol_image.width != self.image_width:
+                raise ValueError("Image at index {} has wrong width. {} but expected {}."
+                                 .format(index, mol_image.width, self.image_width))
+            if mol_image.height != self.molecule_image_height:
+                raise ValueError("Image at index {} has wrong height. {} but expected {}."
+                                 .format(index, mol_image.height, self.molecule_image_height))
+
+            self._add_to_slide(slide, properties, mol_image, index, png_info)
+
+        return self._finalize_slide(slide, png_info, out_path)
+
+    def _prepare_slide(self, mols, properties):
+
         if mols is None:
             raise ValueError('Expected a list of rdkit molecule instances but got \'None\'')
 
@@ -130,38 +176,41 @@ class SlideGenerator(object):
         png_info = PngInfo()
         png_info.add_text('numProperties', str(self.number_of_properties))
 
-        for index, mol in enumerate(mols):
+        return mols, slide, png_info
 
-            mol_image = self._draw_mol(mol)
-            text_image = self._draw_text(properties[index])
+    def _add_to_slide(self, slide, properties, mol_image, index, png_info):
 
-            combined = Image.new('RGBA', [self.image_width, self.row_height], (255, 255, 255, 0))
-            combined.paste(mol_image)
-            combined.paste(text_image, (0, self.molecule_image_height))
+        text_image = self._draw_text(properties[index])
 
-            row = index // self.mols_per_row
-            column = index % self.mols_per_row
-            position = (column * self.image_width, row * self.row_height)
+        combined = Image.new('RGBA', [self.image_width, self.row_height], (255, 255, 255, 0))
+        combined.paste(mol_image)
+        combined.paste(text_image, (0, self.molecule_image_height))
 
-            slide.paste(combined, position)
+        row = index // self.mols_per_row
+        column = index % self.mols_per_row
+        position = (column * self.image_width, row * self.row_height)
 
-            if index > 0:
-                key_index = str(index)
-            else:
-                key_index = ''
+        slide.paste(combined, position)
 
-            png_info.add_text('rdkitPKL{} rdkit {}'.format(key_index, rdkit.__version__),
-                              mol_image.info['rdkitPKL rdkit {}'.format(rdkit.__version__)])
-            png_info.add_text('MOL{} rdkit {}'.format(key_index, rdkit.__version__),
-                              mol_image.info['MOL rdkit {}'.format(rdkit.__version__)])
-            png_info.add_text('SMILES{} rdkit {}'.format(key_index, rdkit.__version__),
-                              mol_image.info['SMILES rdkit {}'.format(rdkit.__version__)])
+        if index > 0:
+            key_index = str(index)
+        else:
+            key_index = ''
 
-            mol_properties = properties[index]
-            mol_properties = mol_properties[:self.number_of_properties]
-            for prop in mol_properties:
-                png_info.add_text('{}{}'.format(prop.name, key_index), str(prop.value))
-                #print("{}: {}".format(prop.name, str(prop.value)))
+        png_info.add_text('rdkitPKL{} rdkit {}'.format(key_index, rdkit.__version__),
+                          mol_image.info['rdkitPKL rdkit {}'.format(rdkit.__version__)])
+        png_info.add_text('MOL{} rdkit {}'.format(key_index, rdkit.__version__),
+                          mol_image.info['MOL rdkit {}'.format(rdkit.__version__)])
+        png_info.add_text('SMILES{} rdkit {}'.format(key_index, rdkit.__version__),
+                          mol_image.info['SMILES rdkit {}'.format(rdkit.__version__)])
+
+        mol_properties = properties[index]
+        mol_properties = mol_properties[:self.number_of_properties]
+        for prop in mol_properties:
+            png_info.add_text('{}{}'.format(prop.name, key_index), str(prop.value))
+            # print("{}: {}".format(prop.name, str(prop.value)))
+
+    def _finalize_slide(self, slide, png_info, out_path):
 
         if out_path is not None:
             slide.save(out_path, format='PNG', dpi=self.dpi, pnginfo=png_info)

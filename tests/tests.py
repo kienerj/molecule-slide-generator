@@ -1,7 +1,7 @@
 import unittest
 import os
 from rdkit import Chem
-from rdkit.Chem import AllChem
+from rdkit.Chem import AllChem, Draw
 from molecule_slide_generator import *
 from PIL import Image
 import imagehash
@@ -20,16 +20,8 @@ class ImageCreationTest(unittest.TestCase):
         hash = imagehash.dhash(Image.open('test_default.png'), hash_size=16)
         self.assertEqual(self.default_hash, hash, msg="Images hashes do not match.")
 
-        # Check properties
-        num_properties = 2
-        # pickle, molfile and smiles
-        num_mol_formats = 3
-        num_mols = 21
-        # +1 for num_properties entry in metadata
-        num_keys = (num_properties + num_mol_formats) * num_mols + 1
-        props = Chem.MetadataFromPNGString(png)
-        self.assertEqual(num_keys, len(props.keys()), msg="Number of key in metadata dict does not match. Expected {}, "
-                                                          "got {}.".format(num_keys, len(props.keys())))
+        num_mols = sg.max_mols
+        self.check_properties(png, num_mols)
         self.check_extraction(png, num_mols)
 
     def test_example_image(self):
@@ -39,18 +31,42 @@ class ImageCreationTest(unittest.TestCase):
         hash = imagehash.dhash(Image.open('test_example.png'), hash_size=16)
         self.assertEqual(self.example_hash, hash, msg="Images hashes do not match.")
 
+        num_mols = sg.max_mols
+        self.check_properties(png, num_mols)
+        self.check_extraction(png, num_mols)
+
+    def test_slide_from_images(self):
+
+        sg = SlideGenerator(mols_per_row=3, rows=3, font_size=18, font='comicbd', number_of_properties=2,
+                            slide_width=800, slide_height=600)
+
+        img_width = sg.image_width
+        img_height = sg.molecule_image_height
+
+        images = []
+        for mol in self.mols:
+            img = Draw.MolToImage(mol, size=(img_width, img_height))
+            images.append(img)
+
+        png = sg.generate_slide_from_images(self.mols, self.all_props, images, 'test_from_images.png')
+        hash = imagehash.dhash(Image.open('test_from_images.png'), hash_size=16)
+        self.assertEqual(self.from_images_hash, hash, msg="Images hashes do not match.")
+
+        num_mols = sg.max_mols
+        self.check_properties(png, num_mols)
+        self.check_extraction(png, num_mols)
+
+    def check_properties(self, png, num_mols):
+
         # Check properties
         num_properties = 2
         # pickle, molfile and smiles
         num_mol_formats = 3
-        num_mols = 9
         # +1 for num_properties entry in metadata
         num_keys = (num_properties + num_mol_formats) * num_mols + 1
         props = Chem.MetadataFromPNGString(png)
         self.assertEqual(num_keys, len(props.keys()), msg="Number of key in metadat dict does not match. Expected {}, "
                                                           "got {}.".format(num_keys, len(props.keys())))
-
-        self.check_extraction(png, num_mols)
 
     def check_extraction(self, png, num_mols):
 
@@ -70,6 +86,7 @@ class ImageCreationTest(unittest.TestCase):
         smi = Chem.MolToSmiles(mol0)
         self.assertEqual('CN(C)Cc1nnc2CN=C(c3ccccc3)c3c(ccc(Cl)c3)-n21', smi, msg="First molecule does not match.")
 
+
     def setUp(self):
         suppl = Chem.SDMolSupplier('bzr21.sdf')
         self.mols = [x for x in suppl]
@@ -88,6 +105,7 @@ class ImageCreationTest(unittest.TestCase):
 
         self.default_hash = imagehash.dhash(Image.open('../images/test_default.png'), hash_size=16)
         self.example_hash = imagehash.dhash(Image.open('../images/example_slide_bzr.png'), hash_size=16)
+        self.from_images_hash = imagehash.dhash(Image.open('../images/test_from_images.png'), hash_size=16)
 
 
 if __name__ == '__main__':
