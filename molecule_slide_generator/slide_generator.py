@@ -28,7 +28,7 @@ class SlideGenerator(object):
     LINUX_TRUETYPE_FONTS_FOLDER = '/usr/share/fonts/truetype'
 
     def __init__(self, mols_per_row=7, rows=3, font_size=16, font='Calibrib', number_of_properties=4, bond_length=20,
-                 slide_width=1440, slide_height=607, dpi = (120,120)):
+                 bond_width=2, slide_width=1440, slide_height=607, dpi = (120,120)):
         """
         The parameters defined are used to calculate the size that each molecule and the properties part can take up.
 
@@ -58,7 +58,7 @@ class SlideGenerator(object):
 
         root, ext = os.path.splitext(font)
         platform_system = platform.system()
-        if ext is not '' and ext != 'ttf':
+        if ext != '' and ext != 'ttf':
             raise ValueError("'font' must be a path to an existing ttf file. However an {} file was provided.".format(ext))
         elif ext == 'ttf':
             self.font_path = font
@@ -81,6 +81,7 @@ class SlideGenerator(object):
             raise ValueError("Desired font file '{}' does not exist.".format({self.font_path}))
 
         self.font_size = font_size
+        self.bond_width = bond_width
         self.mols_per_row = mols_per_row
         self.mols_per_column = rows
         self.max_mols = mols_per_row * rows
@@ -161,7 +162,7 @@ class SlideGenerator(object):
         # cut-off mols + properties silently. I think this is better than raising a ValueError
         mols = mols[:self.max_mols]
         properties = properties[:self.max_mols]
-        if len(mols) != len(properties):
+        if self.number_of_properties > 0 and len(mols) != len(properties):
             raise ValueError('Number of molecules must match number of properties.')
 
         if len(mols) == self.max_mols:
@@ -180,11 +181,14 @@ class SlideGenerator(object):
 
     def _add_to_slide(self, slide, properties, mol_image, index, png_info):
 
-        text_image = self._draw_text(properties[index])
+        if self.number_of_properties > 0:
+            text_image = self._draw_text(properties[index])
 
-        combined = Image.new('RGBA', [self.image_width, self.row_height], (255, 255, 255, 0))
-        combined.paste(mol_image)
-        combined.paste(text_image, (0, self.molecule_image_height))
+            combined = Image.new('RGBA', [self.image_width, self.row_height], (255, 255, 255, 0))
+            combined.paste(mol_image)
+            combined.paste(text_image, (0, self.molecule_image_height))
+        else:
+            combined = mol_image
 
         row = index // self.mols_per_row
         column = index % self.mols_per_row
@@ -204,11 +208,12 @@ class SlideGenerator(object):
         png_info.add_text('SMILES{} rdkit {}'.format(key_index, rdkit.__version__),
                           mol_image.info['SMILES rdkit {}'.format(rdkit.__version__)])
 
-        mol_properties = properties[index]
-        mol_properties = mol_properties[:self.number_of_properties]
-        for prop in mol_properties:
-            png_info.add_text('{}{}'.format(prop.name, key_index), str(prop.value))
-            # print("{}: {}".format(prop.name, str(prop.value)))
+        if self.number_of_properties > 0:
+            mol_properties = properties[index]
+            mol_properties = mol_properties[:self.number_of_properties]
+            for prop in mol_properties:
+                png_info.add_text('{}{}'.format(prop.name, key_index), str(prop.value))
+                # print("{}: {}".format(prop.name, str(prop.value)))
 
     def _finalize_slide(self, slide, png_info, out_path):
 
@@ -241,11 +246,13 @@ class SlideGenerator(object):
         mol = rdMolDraw2D.PrepareMolForDrawing(mol, kekulize=kekulize, addChiralHs=add_chiral_hs)
         mol = SlideGenerator._scale_bond_length(mol)
         drawer = rdMolDraw2D.MolDraw2DCairo(self.image_width, self.molecule_image_height)
+        drawer.SetFontSize(self.font_size)
         opts = drawer.drawOptions()
         opts.clearBackground = False
-        opts.bondLineWidth = 2
+        opts.bondLineWidth = self.bond_width
         opts.fixedBondLength = self.bond_length
-        opts.minFontSize = 16
+        opts.minFontSize = self.font_size
+        opts.maxFontSize = self.font_size
         opts.fontFile = self.font_path
 
         drawer.DrawMolecule(mol)
