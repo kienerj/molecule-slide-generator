@@ -105,7 +105,8 @@ class SlideGenerator(object):
 
         :param mols: list of rdkit molecules
         :param properties: list of list of TextProperty
-        :return:
+        :param out_path: optional file to save generated images
+        :return: bytes object containing the png image data say for display in a notebook
         """
 
         if mols is None:
