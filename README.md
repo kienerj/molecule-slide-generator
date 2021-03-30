@@ -34,10 +34,10 @@ This takes care of all dependencies and is the suggested way to try it out.
 
 ##### Existing environment
 
-To install into an existing environment, please ensure the needed requirements are already installed as the install script does not verify them.
+To install into an existing environment, please ensure the needed requirements are already installed as the install script does not verify all of them.
 
 ```bash
-pip install git+https://github.com/kienerj/molecule-slide-generator
+pip install molecule-slide-generator
 ```
 
 ### Features

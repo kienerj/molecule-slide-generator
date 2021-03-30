@@ -10,4 +10,4 @@ dependencies:
   - pip
   - git
   - pip:
-    - git+https://github.com/kienerj/molecule-slide-generator.git
+    - molecule-slide-generator
