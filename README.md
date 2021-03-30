@@ -2,7 +2,7 @@
 
 RDKit Molecule Slide Generator is a tool for generating an overview image of molecules and their properties for usage in reports, presentations or blogs. An advanced `MolsToGridImage`. It's easier to show than explain.
 
-![example_slide_bzr](images/example_slide_bzr.png)
+![example_slide_bzr](https://raw.githubusercontent.com/kienerj/molecule-slide-generator/master/images/example_slide_bzr.png)
 
 This example uses the first 9 molecules of the `bzr.sdf` in the RDKit distributions data directory and uses Comic Sans MS as font. Activity values are conditionally colored.
 
