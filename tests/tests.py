@@ -56,6 +56,12 @@ class ImageCreationTest(unittest.TestCase):
         self.check_properties(png, num_mols)
         self.check_extraction(png, num_mols)
 
+    def test_font_from_file(self):
+
+        sg = SlideGenerator(number_of_properties=2, font="Raleway-Bold.ttf")
+        png = sg.generate_slide(self.mols, self.all_props, 'test_font.png')
+        self.assertIsNotNone(png, msg="Could not generate slide from font file input")
+
     def check_properties(self, png, num_mols):
 
         # Check properties

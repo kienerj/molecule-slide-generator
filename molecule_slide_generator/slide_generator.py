@@ -58,9 +58,9 @@ class SlideGenerator(object):
 
         root, ext = os.path.splitext(font)
         platform_system = platform.system()
-        if ext != '' and ext != 'ttf':
-            raise ValueError("'font' must be a path to an existing ttf file. However an {} file was provided.".format(ext))
-        elif ext == 'ttf':
+        if ext != '' and ext != '.ttf':
+            raise ValueError("'font' must be a path to an existing ttf file. However {} was provided as font.".format(font))
+        elif ext == '.ttf':
             self.font_path = font
         elif platform_system == 'Windows':
             self.font_path = 'C:/Windows/Fonts/' + font + '.ttf'
@@ -91,7 +91,7 @@ class SlideGenerator(object):
         self.dpi = dpi
         self.image_width = slide_width // mols_per_row
         self.row_height = slide_height // rows
-        self.font = ImageFont.truetype('C:/Windows/Fonts/' + font + '.ttf', size=font_size)
+        self.font = ImageFont.truetype(self.font_path, size=font_size)
         self.line_height = self.font.getsize('hg')[1] + 1
         self.text_image_height = math.ceil(self.line_height * number_of_properties)
         self.molecule_image_height = self.row_height - self.text_image_height
