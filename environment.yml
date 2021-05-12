@@ -8,6 +8,5 @@ dependencies:
   - numpy  
   - pillow
   - pip
-  - git
   - pip:
     - molecule-slide-generator
