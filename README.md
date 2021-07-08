@@ -87,6 +87,8 @@ png = sg.generate_slide(mols, all_props, 'example_slide.png')
 
 For font you can either use a named font or a full path to a `.ttf` file. For named fonts the font must be in `C:/Windows/Fonts/` directory for Windows and for Linux in `/usr/share/fonts/truetype`.
 
+The returned `png` is a simple extension of `bytes` built-in class that can be used as such but is displayed as image in Jupyter notebooks automatically without needing to use `IPython.display` (it just works like with RDKit molecules).
+
 
 ### Extracting
 
@@ -131,7 +133,7 @@ float(nprops['Activity1'].decode('utf-8'))
 
 #### Data Extractor
 
-The molecules and properties can be extracted again from the images by using the `DataExtractor`.
+The molecules and properties can be extracted again from the images by using `DataExtractor`.
 
 ``````python
 extractor = DataExtractor()
@@ -148,6 +150,12 @@ If you insert the image into an MS Office document, it can get problematic to ex
 
 ### Miscellaneous
 
-The default parameters of the slide generator work well with small molecules and a PowerPoint template with an aspect ratio of 16:9 that has a title and subtitle text box, the specific setup I have to use. You will need to play with the parameters to find an good solution for your specific needs.
+#### Layout / Parameters
+
+The default parameters of the slide generator work well with small molecules and a PowerPoint template with an aspect ratio of 16:9 that has a title and subtitle text box, the specific setup I have to use. You will need to play with the parameters to find an good solution for your specific needs. 
+
+If the image is "too crowed" then either increase the slide dimension or reduce the number of rows or columns on the slide. To change the size of the molecules, use the `bond_length` parameter. Molecules that do not fit in the defined space will be automatically shrunk down. However this has a limitation on the atom label font size. So some minor shrinking works fine but too much and the labels will be too large. In that case, reduce the `bond_length`.
+
+#### Inner workings
 
 Technically the generator creates a molecule image using RDKit and a separate image with the text (properties) and merges them. Then all these images get merged together into the final image to which the metadata is appended. For all this "image manipulation" `pillow` is used.
