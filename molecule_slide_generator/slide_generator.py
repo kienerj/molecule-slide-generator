@@ -11,6 +11,28 @@ import os
 import pathlib
 
 
+class Slide(bytes):
+    """
+    Helper class that extends bytes. It's expected the loaded bytes are a png image.
+    The class displays the image as representation when used in Jupyter Notebooks without any further coding requirement
+    for the user.
+
+    As additional convince functions, the bytes can also be easily saved to file or converted to a PIL image.
+    """
+    def save(self, file):
+        with open(file, 'wb') as img:
+            img.write(self)
+
+    def to_pil_image(self):
+        stream = BytesIO(self)
+        pil_image = Image.open(stream)
+        pil_image.load()
+        return pil_image
+
+    def _repr_png_(self):
+        return self
+
+
 class SlideGenerator(object):
     """Molecule Overview Slide Generator
 
@@ -222,8 +244,8 @@ class SlideGenerator(object):
 
         img_byte_arr = BytesIO()
         slide.save(img_byte_arr, format='PNG', dpi=self.dpi, pnginfo=png_info)
-        img_byte_arr = img_byte_arr.getvalue()
-        return img_byte_arr
+        # img_byte_arr = img_byte_arr.getvalue()
+        return Slide(img_byte_arr.getvalue())
 
     def _draw_text(self, mol_properties):
 
