@@ -1,7 +1,7 @@
 name: slide_generator
 channels:
-  - defaults
-  - rdkit
+  - conda-forge
+  - defaults  
 dependencies:
   - python>=3.6
   - rdkit>=2020.09.1
