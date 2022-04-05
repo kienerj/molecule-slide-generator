@@ -76,6 +76,11 @@ class SlideGenerator(object):
         :param font_size: size of the properties font. default:16
         :param font: name of the font to use or path to a .ttf font file
         :param number_of_properties: number of properties to display below the molecule
+        :param bond_length: maximum bond length. if needed will be scaled down to fit image
+        :param bond_width: width of bonds
+        :param slide_width: width of the generated image
+        :param slide_height: height of the generated image
+        :param dpi: resolution of the generated image. A 2-tuple, 1 for each dimension
         """
 
         root, ext = os.path.splitext(font)
@@ -286,7 +291,14 @@ class SlideGenerator(object):
 
     @staticmethod
     def _scale_bond_length(mol):
+        """
+        This helper function scales a molecules bond length so that all bonds have the RDKit default bond length of
+        1.5A. This is needed as input from sd-files can have very variable bond length and the output will then not
+        look very nice.
 
+        :param mol: the rdkit molecule
+        :return: molecule with bond length changed to 1.5
+        """
         default_bond_length = 1.5  # rdkit default bond length
 
         bonds = mol.GetBonds()
@@ -332,7 +344,7 @@ class TextProperty(object):
         :param name: display name of the property
         :param value: the value of the property
         :param show_name: if the name of the property should be displayed or not
-        :param color: color of the text for this property. Default is black.
+        :param color: color of the text for this property. Default is black. HEX or RGBA 4-tuple.
         """
         self.name = name
         self.value = value
