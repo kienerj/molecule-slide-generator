@@ -50,7 +50,7 @@ class SlideGenerator(object):
     LINUX_TRUETYPE_FONTS_FOLDER = '/usr/share/fonts/truetype'
 
     def __init__(self, mols_per_row=7, rows=3, font_size=16, font='Calibrib', number_of_properties=4, bond_length=20,
-                 bond_width=2, slide_width=1440, slide_height=607, dpi = (120,120)):
+                 bond_width=2, slide_width=1440, slide_height=607, dpi = (120,120), comic_mode=False):
         """
         The parameters defined are used to calculate the size that each molecule and the properties part can take up.
 
@@ -126,6 +126,7 @@ class SlideGenerator(object):
         avg_char_width = self.font.getsize('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ123456789-, ')[0] / 64
         self.num_chars_per_line = self.image_width / avg_char_width
         self.bond_length = bond_length
+        self.comic_mode = comic_mode
 
     def generate_slide(self, mols, properties, out_path=None):
         """
@@ -281,6 +282,7 @@ class SlideGenerator(object):
         opts.minFontSize = self.font_size
         opts.maxFontSize = self.font_size
         opts.fontFile = self.font_path
+        opts.comicMode = self.comic_mode
 
         drawer.DrawMolecule(mol)
         drawer.FinishDrawing()
