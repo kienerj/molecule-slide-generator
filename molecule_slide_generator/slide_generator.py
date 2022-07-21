@@ -50,7 +50,7 @@ class SlideGenerator(object):
     LINUX_TRUETYPE_FONTS_FOLDER = '/usr/share/fonts/truetype'
 
     def __init__(self, mols_per_row=7, rows=3, font_size=16, font='Calibrib', number_of_properties=4, bond_length=20,
-                 bond_width=2, slide_width=1440, slide_height=607, dpi = (120,120), comic_mode=False):
+                 bond_width=2, slide_width=1440, slide_height=607, dpi=(120,120), comic_mode=False):
         """
         The parameters defined are used to calculate the size that each molecule and the properties part can take up.
 
@@ -61,14 +61,14 @@ class SlideGenerator(object):
         some manual experiments to figure out optimal settings.
 
         'font' must either be a font name of a installed font or the full path to a true type font file (.ttf).
-        For Windows the named fonts must be in 'C:/Windows/Fonts/' directory and for Linux in '/usr/share/fonts/truetype'.
-        (Linux font folder is for Ubuntu. Don't know if it is the same for other distros).
+        For Windows the named fonts must be in 'C:/Windows/Fonts/' directory and for Linux in
+        '/usr/share/fonts/truetype'. (Linux font folder is for Ubuntu. Don't know if it is the same for other distros).
         The font is used for the atom labels and the properties.
 
-        'number_of_properties' defines how many additional data you want to show below the molecules. Each property takes
-        up 1 line of text. Example: pIC50: 6.2. This is meant for very small amounts of text/data. If text is too long,
-        it is simply truncated automatically due to image width limit. It's up to the caller to adjust the data if hard
-        truncation isn't acceptable. The approximate number of characters per line can be deduced from the instance
+        'number_of_properties' defines how many additional data you want to show below the molecules. Each property
+        takes up 1 line of text. Example: pIC50: 6.2. This is meant for very small amounts of text/data. If text is too
+        long, it is simply truncated automatically due to image width limit. It's up to the caller to adjust the data if
+        hard truncation isn't acceptable. The approximate number of characters per line can be deduced from the instance
         attribute 'num_chars_per_line'. Exact amount depends on the exact text.
 
         :param mols_per_row: number of molecules per row. default:7
@@ -86,7 +86,7 @@ class SlideGenerator(object):
         root, ext = os.path.splitext(font)
         platform_system = platform.system()
         if ext != '' and ext != '.ttf':
-            raise ValueError("'font' must be a path to an existing ttf file. However {} was provided as font.".format(font))
+            raise ValueError(f"'font' must be a path to an existing ttf file. However {font} was provided as font.")
         elif ext == '.ttf':
             self.font_path = font
         elif platform_system == 'Windows':
@@ -100,8 +100,8 @@ class SlideGenerator(object):
                     self.font_path = os.path.join(root, font_file_name)
                     break
         else:
-            raise ValueError ("'font' was set to name {} but the location of the font folder is unknown for platform "
-                              "{}. Please use full path to font file.".format(font, platform_system))
+            raise ValueError(f"'font' was set to name {font} but the location of the font folder is unknown for "
+                             f"platform {platform_system}. Please use full path to font file.")
 
         p = pathlib.Path(self.font_path)
         if not p.is_file():
@@ -152,12 +152,12 @@ class SlideGenerator(object):
         """
         Generates an image with all molecules and their properties below them.
 
-        Images is a list containing the molecules images as PIL images to use in the slide. They must be in same order as mols.
-        This allows each molecule image to be generated differently like substructure highlighting, annotations and so
-        forth. So many options they can't be all part of a methods argument.
+        Images is a list containing the molecules images as PIL images to use in the slide. They must be in same order
+        as mols. This allows each molecule image to be generated differently like substructure highlighting, annotations
+        and so forth. So many options they can't be all part of a methods' argument.
 
         :param mols: list of rdkit molecules
-        :param properties: list of list of TextProperty
+        :param properties: list of lists of TextProperty
         :param images: list of images to use for each molecule
         :param out_path: optional file to save generated images
         :return: bytes object containing the png image data say for display in a notebook
@@ -194,13 +194,13 @@ class SlideGenerator(object):
             raise ValueError('Number of molecules must match number of properties.')
 
         if len(mols) == self.max_mols:
-            slide = Image.new('RGBA', [self.slide_width, self.slide_height], (255, 255, 255, 0))
+            slide = Image.new('RGBA', (self.slide_width, self.slide_height), (255, 255, 255, 0))
         # less mols -> smaller image
         elif len(mols) < self.mols_per_row:
-            slide = Image.new('RGBA', [len(mols) * self.image_width, self.row_height], (255, 255, 255, 0))
+            slide = Image.new('RGBA', (len(mols) * self.image_width, self.row_height), (255, 255, 255, 0))
         else:
             num_rows = (len(mols) // self.mols_per_row) + 1
-            slide = Image.new('RGBA', [self.slide_width, self.row_height * num_rows], (255, 255, 255, 0))
+            slide = Image.new('RGBA', (self.slide_width, self.row_height * num_rows), (255, 255, 255, 0))
 
         png_info = PngInfo()
         png_info.add_text('numProperties', str(self.number_of_properties))
@@ -212,7 +212,7 @@ class SlideGenerator(object):
         if self.number_of_properties > 0:
             text_image = self._draw_text(properties[index])
 
-            combined = Image.new('RGBA', [self.image_width, self.row_height], (255, 255, 255, 0))
+            combined = Image.new('RGBA', (self.image_width, self.row_height), (255, 255, 255, 0))
             combined.paste(mol_image)
             combined.paste(text_image, (0, self.molecule_image_height))
         else:
